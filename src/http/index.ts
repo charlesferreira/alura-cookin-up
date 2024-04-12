@@ -1,15 +1,17 @@
-import type ICategoria from "@/interfaces/ICategoria";
-import type IReceita from "@/interfaces/IReceita";
+import type Categoria from "@/model/Categoria";
+import type Receita from "@/model/Receita";
 
-async function obterDadosURL<T>(url: string) {
-  const resposta = await fetch(url);
-  return resposta.json() as T;
+const API_URL = 'https://gist.githubusercontent.com/antonio-evaldo/002ad55e1cf01ef3fc6ee4feb9152964/raw/bf463b47860043da3b3604ca60cffc3ad1ba9865';
+
+const fetchApi = async (path: string) => {
+    return fetch(`${API_URL}/${path}`)
+        .then((response) => response.json())
 }
 
-export async function obterCategorias() {
-  return obterDadosURL<ICategoria[]>('https://gist.githubusercontent.com/antonio-evaldo/002ad55e1cf01ef3fc6ee4feb9152964/raw/86802bed06855cdccc9247dd1fa175c6ccea7dda/categorias.json');
+export async function obterCategorias(): Promise<Categoria[]> {
+    return fetchApi('categorias.json');
 }
 
-export async function obterReceitas() {
-  return obterDadosURL<IReceita[]>('https://gist.githubusercontent.com/antonio-evaldo/002ad55e1cf01ef3fc6ee4feb9152964/raw/07e853b7d0626db51ce2e84bb2f15ca450b7bd7f/receitas.json');
+export async function obterReceitas(): Promise<Receita[]> {
+    return fetchApi('receitas.json');
 }

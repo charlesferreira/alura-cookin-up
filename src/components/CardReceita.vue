@@ -1,12 +1,13 @@
-<script lang="ts">
-import type IReceita from '@/interfaces/IReceita';
+<script setup lang="ts">
+import type Receita from '@/model/Receita';
 import type { PropType } from 'vue';
 
-export default {
-  props: {
-    receita: { type: Object as PropType<IReceita>, required: true }
+defineProps({
+  receita: {
+    type: Object as PropType<Receita>,
+    required: true
   }
-}
+});
 </script>
 
 <template>
@@ -32,8 +33,8 @@ export default {
   align-items: center;
 
   border-radius: 1rem;
-  background: var(--Branco, #FFF);
-  box-shadow: 4px 4px 12px 0px rgba(68, 68, 68, 0.08);
+  background: var(--branco, #FFF);
+  box-shadow: 4px 4px 12px 0 rgba(68, 68, 68, 0.08);
 }
 
 .receita__corpo {
@@ -42,7 +43,7 @@ export default {
 
 .receita__imagem {
   width: 100%;
-  border-radius: 1rem 1rem 0rem 0rem;
+  border-radius: 1rem 1rem 0 0;
   display: block;
 }
 

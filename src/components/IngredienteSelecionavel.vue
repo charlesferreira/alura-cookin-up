@@ -1,43 +1,46 @@
-<script lang="ts">
-import Tag from './Tag.vue';
+<script setup lang="ts">
+import Tag from "@/components/Tag.vue";
+import {ref} from "vue";
 
-export default {
-  components: { Tag },
-  props: {
-    ingrediente: { type: String, required: true }
-  },
-  data() {
-    return {
-      selecionado: false
-    }
-  },
-  methods: {
-    aoClicar() {
-      this.selecionado = !this.selecionado
+const props = defineProps({
+  ingrediente: {
+    type: String,
+    required: true
+  }
+});
 
-      if (this.selecionado) {
-        this.$emit('adicionarIngrediente', this.ingrediente)
-      } else {
-        this.$emit('removerIngrediente', this.ingrediente);
-      }
-    }
-  },
-  emits: ['adicionarIngrediente', 'removerIngrediente']
-}
+const emit = defineEmits(["adicionarIngrediente", "removerIngrediente"]);
+
+const selecionado = ref(false);
+
+const aoClicar = () => {
+  selecionado.value = !selecionado.value;
+
+  if (selecionado.value) {
+    emit("adicionarIngrediente", props.ingrediente);
+  } else {
+    emit("removerIngrediente", props.ingrediente);
+  }
+};
 </script>
 
 <template>
   <button
-    class="ingrediente"
-    @click="aoClicar"
-    :aria-pressed="selecionado"
+      class="ingrediente"
+      @click="aoClicar"
+      :aria-pressed="selecionado"
   >
-    <Tag :texto="ingrediente" :ativa="selecionado" />
+    <Tag :texto="ingrediente" :ativa="selecionado"/>
   </button>
 </template>
 
 <style scoped>
 .ingrediente {
+  border: none;
+  background: none;
   cursor: pointer;
+  padding: 0;
+  margin: 0;
+  transition: 0.2s;
 }
 </style>

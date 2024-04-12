@@ -1,3 +1,6 @@
+<script setup lang="ts">
+</script>
+
 <template>
   <header class="banner">
     <div class="apresentacao">
@@ -13,7 +16,9 @@
       </p>
     </div>
 
-    <img src="../assets/imagens/foto-banner.png" alt="Foto de uma mulher cozinhando com uma bacia de vidro nas mãos. Ela está sorrindo e está apoiando um celular entre seu rosto e ombro." class="foto-banner">
+    <img src="../assets/imagens/foto-banner.png"
+         alt="Foto de uma mulher cozinhando com uma bacia de vidro nas mãos. Ela está sorrindo e está apoiando um celular entre seu rosto e ombro."
+         class="foto-banner">
   </header>
 </template>
 

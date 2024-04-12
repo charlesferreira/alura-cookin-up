@@ -1,36 +1,30 @@
-<script lang="ts">
-import { itensDeLista1EstaoEmLista2 } from '@/operacoes/listas';
-import type { PropType } from 'vue';
-import { obterReceitas } from '@/http';
-import type IReceita from '@/interfaces/IReceita';
-import BotaoPrincipal from './BotaoPrincipal.vue';
-import CardReceita from './CardReceita.vue';
+<script setup lang="ts">
+import {obterReceitas} from "@/http";
+import BotaoPrincipal from "@/components/BotaoPrincipal.vue";
+import CardReceita from "@/components/CardReceita.vue";
+import type Receita from "@/model/Receita";
+import {onMounted, ref} from "vue";
 
-export default {
-  props: {
-    ingredientes: { type: Array as PropType<string[]>, required: true }
-  },
-  data() {
-    return {
-      receitasEncontradas: [] as IReceita[]
-    };
-  },
-  async created() {
-    const receitas = await obterReceitas();
+defineEmits(["editarLista"]);
 
-    this.receitasEncontradas = receitas.filter((receita) => {
-      // Lógica que verifica se posso fazer receita:
-      // Todos os ingredientes de uma receita devem estar inclusos na minha lista de ingredientes
-      // Se sim, devemos retornar `true`
+const props = defineProps({
+  ingredientes: {
+    type: Array as () => string[],
+    required: true
+  }
+});
 
-      const possoFazerReceita = itensDeLista1EstaoEmLista2(receita.ingredientes, this.ingredientes);
+const receitasEncontradas = ref<Receita[]>([]);
 
-      return possoFazerReceita;
-    })
-  },
-  components: { BotaoPrincipal, CardReceita },
-  emits: ['editarReceitas']
-}
+onMounted(async () => {
+  const receitas = await obterReceitas();
+  const ingredientes = new Set(props.ingredientes);
+
+  receitasEncontradas.value = receitas.filter(receita => {
+    const ingredientesReceita = new Set(receita.ingredientes);
+    return [...ingredientes].every(ingrediente => ingredientesReceita.has(ingrediente));
+  });
+});
 </script>
 
 <template>
@@ -48,7 +42,7 @@ export default {
 
       <ul class="receitas">
         <li v-for="receita of receitasEncontradas" :key="receita.nome">
-          <CardReceita :receita="receita" />
+          <CardReceita :receita="receita"/>
         </li>
       </ul>
     </div>
@@ -59,14 +53,15 @@ export default {
       </p>
 
       <img src="../assets/imagens/sem-receitas.png"
-        alt="Desenho de um ovo quebrado. A gema tem um rosto com uma expressão triste.">
+           alt="Desenho de um ovo quebrado. A gema tem um rosto com uma expressão triste.">
     </div>
 
-    <BotaoPrincipal texto="Editar lista" @click="$emit('editarReceitas')" />
+    <BotaoPrincipal texto="Editar lista" @click="$emit('editarLista')"/>
   </section>
 </template>
 
 <style scoped>
+
 .mostrar-receitas {
   display: flex;
   flex-direction: column;

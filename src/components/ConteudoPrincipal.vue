@@ -1,47 +1,48 @@
-<script lang="ts">
-import MostrarReceitas from './MostrarReceitas.vue';
-import SelecionarIngredientes from './SelecionarIngredientes.vue';
-import SuaLista from './SuaLista.vue';
-import Tag from './Tag.vue';
+<script setup lang="ts">
+import SelecionarIngredientes from "./SelecionarIngredientes.vue";
+import SuaLista from "@/components/SuaLista.vue";
+import {ref} from "vue";
+import MostrarReceitas from "@/components/MostrarReceitas.vue";
 
-type Pagina = 'SelecionarIngredientes' | 'MostrarReceitas';
-
-export default {
-  data() {
-    return {
-      ingredientes: [] as string[],
-      conteudo: 'SelecionarIngredientes' as Pagina
-    };
-  },
-  components: { SelecionarIngredientes, Tag, SuaLista, MostrarReceitas },
-  methods: {
-    adicionarIngrediente(ingrediente: string) {
-      this.ingredientes.push(ingrediente)
-    },
-    removerIngrediente(ingrediente: string) {
-      this.ingredientes = this.ingredientes.filter(iLista => ingrediente !== iLista);
-    },
-    navegar(pagina: Pagina) {
-      this.conteudo = pagina;
-    }
-  }
+enum Pagina {
+  INGREDIENTES = "ingredientes",
+  RECEITAS = "receitas",
 }
+
+const ingredientes = ref<string[]>([]);
+const pagina = ref<Pagina>(Pagina.INGREDIENTES);
+
+const adicionarIngrediente = (ingrediente: string) => {
+  if (!ingredientes.value.includes(ingrediente)) {
+    ingredientes.value.push(ingrediente);
+  }
+};
+
+const removerIngrediente = (ingrediente: string) => {
+  ingredientes.value = ingredientes.value.filter((i) => i !== ingrediente);
+};
+
+const navegar = (novaPagina: Pagina) => {
+  pagina.value = novaPagina;
+};
 </script>
 
 <template>
   <main class="conteudo-principal">
-    <SuaLista :ingredientes="ingredientes" />
+    <SuaLista :ingredientes="ingredientes"/>
 
     <KeepAlive include="SelecionarIngredientes">
-      <SelecionarIngredientes v-if="conteudo === 'SelecionarIngredientes'"
-        @adicionar-ingrediente="adicionarIngrediente"
-        @remover-ingrediente="removerIngrediente"
-        @buscar-receitas="navegar('MostrarReceitas')"
+      <SelecionarIngredientes
+          v-if="pagina === Pagina.INGREDIENTES"
+          @adicionar-ingrediente="adicionarIngrediente"
+          @remover-ingrediente="removerIngrediente"
+          @buscar-receitas="navegar(Pagina.RECEITAS)"
       />
-  
-      <MostrarReceitas v-else-if="conteudo === 'MostrarReceitas'"
+
+      <MostrarReceitas
+        v-else-if="pagina === Pagina.RECEITAS"
         :ingredientes="ingredientes"
-        @editar-receitas="navegar('SelecionarIngredientes')"
+        @editar-lista="navegar(Pagina.INGREDIENTES)"
       />
     </KeepAlive>
   </main>
@@ -50,7 +51,7 @@ export default {
 <style scoped>
 .conteudo-principal {
   padding: 6.5rem 7.5rem;
-  border-radius: 3.75rem 3.75rem 0rem 0rem;
+  border-radius: 3.75rem 3.75rem 0 0;
   background: var(--creme, #FFFAF3);
   color: var(--cinza, #444);
 
@@ -58,31 +59,6 @@ export default {
   flex-direction: column;
   align-items: center;
   gap: 5rem;
-}
-
-.sua-lista-texto {
-  color: var(--coral, #F0633C);
-  display: block;
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
-.ingredientes-sua-lista {
-  display: flex;
-  justify-content: center;
-  gap: 1rem 1.5rem;
-  flex-wrap: wrap;
-}
-
-.lista-vazia {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-
-  color: var(--coral, #F0633C);
-  text-align: center;
 }
 
 @media only screen and (max-width: 1300px) {
@@ -98,4 +74,5 @@ export default {
     gap: 4rem;
   }
 }
+
 </style>
